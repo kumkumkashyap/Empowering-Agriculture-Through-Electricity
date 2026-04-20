@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Panel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #e6f7ea, #d8f3dc);
+}
+
+header {
+    background: #2d6a4f;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    padding: 30px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    background: #2d6a4f;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1b4332;
+}
+
+.complaint {
+    border-left: 5px solid #2d6a4f;
+    padding: 10px;
+    margin: 10px 0;
+    background: #f1fdf3;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Admin Panel</h1>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+    <!-- 🔌 POWER -->
+    <div class="card">
+        <h2>Set Power Schedule</h2>
+
+        <input type="text" id="p_farmer_phone" placeholder="Farmer Phone">
+        <input type="time" id="startTime">
+        <input type="time" id="endTime">
+
+        <button onclick="setPower()">Update Power</button>
+    </div>
+
+    <!-- 🔋 VOLTAGE -->
+    <div class="card">
+        <h2>Add Voltage</h2>
+
+        <input type="text" id="v_farmer_phone" placeholder="Farmer Phone">
+        <input type="number" id="voltage_value" placeholder="Voltage (e.g. 220)">
+
+        <button onclick="addVoltage()">Add Voltage</button>
+    </div>
+
+    <!-- 📊 USAGE -->
+    <div class="card">
+        <h2>Add Usage</h2>
+
+        <input type="text" id="farmer_phone" placeholder="Farmer Phone">
+        <input type="number" id="units" placeholder="Units Used">
+        <input type="date" id="usage_date">
+
+        <button onclick="addUsage()">Add Usage</button>
+    </div>
+
+    <!-- 📢 ANNOUNCEMENT -->
+    <div class="card">
+        <h2>Add Announcement</h2>
+
+        <textarea id="announcement" placeholder="Enter message"></textarea>
+
+        <button onclick="addAnnouncement()">Add</button>
+    </div>
+
+    <!-- ⚠️ COMPLAINTS -->
+    <div class="card">
+        <h2>Complaints</h2>
+        <div id="complaints-container"></div>
+    </div>
+
+</div>
+
+<script>
+let user = JSON.parse(localStorage.getItem("user"))
+
+if (!user || user.role !== "admin") {
+    alert("Unauthorized access")
+    window.location.href = "/login.html"
+}
+
+const API = ""
+const ADMIN_PHONE = "9999999999"
+
+// 🔌 POWER
+async function setPower() {
+    let farmerPhoneVal = document.getElementById("p_farmer_phone").value;
+    let startTimeVal = document.getElementById("startTime").value;
+    let endTimeVal = document.getElementById("endTime").value;
+
+    let res = await fetch(`${API}/setPower`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            phone: ADMIN_PHONE,
+            farmerPhone: farmerPhoneVal,
+            startTime: startTimeVal,
+            endTime: endTimeVal
+        })
+    })
+
+    alert(await res.text())
+}
+
+// 🔋 VOLTAGE
+async function addVoltage() {
+    let farmerPhoneVal = document.getElementById("v_farmer_phone").value;
+    let voltageVal = document.getElementById("voltage_value").value;
+
+    let res = await fetch(`${API}/addVoltage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            phone: ADMIN_PHONE,
+            farmerPhone: farmerPhoneVal,
+            voltage: voltageVal,
+            date: new Date().toLocaleDateString()
+        })
+    })
+
+    alert(await res.text())
+}
+
+// 📊 USAGE
+async function addUsage() {
+    let farmerPhoneVal = document.getElementById("farmer_phone").value;
+    let unitsVal = document.getElementById("units").value;
+    let dateVal = document.getElementById("usage_date").value;
+
+    let res = await fetch(`${API}/addUsage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            phone: ADMIN_PHONE,
+            farmerPhone: farmerPhoneVal,
+            units: unitsVal,
+            date: dateVal
+        })
+    })
+
+    alert(await res.text())
+}
+
+// 📢 ANNOUNCEMENT
+async function addAnnouncement() {
+    let announcementVal = document.getElementById("announcement").value;
+
+    let res = await fetch(`${API}/addAnnouncement`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            phone: ADMIN_PHONE,
+            message: announcementVal
+        })
+    })
+
+    alert(await res.text())
+}
+
+// ⚠️ LOAD COMPLAINTS
+async function loadComplaints() {
+    let res = await fetch(`${API}/getComplaints`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: ADMIN_PHONE })
+    })
+
+    let data = await res.json()
+
+    let container = document.getElementById("complaints-container")
+    container.innerHTML = ""
+
+    data.forEach(c => {
+        container.innerHTML += `
+            <div class="complaint">
+                <p><b>User:</b> ${c.phone}</p>
+                <p>${c.message}</p>
+
+                <input placeholder="Reply..." id="reply-${c._id}">
+                <button onclick="replyComplaint('${c._id}')">Send Reply</button>
+
+                <p><b>Reply:</b> ${c.reply || "No reply yet"}</p>
+            </div>
+        `
+    })
+}
+
+// ✉️ REPLY
+async function replyComplaint(id) {
+    let replyText = document.getElementById(`reply-${id}`).value
+
+    let res = await fetch(`${API}/replyComplaint`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            phone: ADMIN_PHONE,
+            id: id,
+            reply: replyText
+        })
+    })
+
+    alert(await res.text())
+    loadComplaints()
+}
+
+// 🔓 LOGOUT
+function logout() {
+    localStorage.removeItem("user")
+    alert("Logged out")
+    window.location.href = "/login.html"
+}
+
+// INIT
+loadComplaints()
+</script>
+
+</body>
+</html>

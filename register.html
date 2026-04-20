@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Register | AgriPower</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+•⁠  ⁠{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #52b788, #2d6a4f);
+    padding: 20px;
+}
+
+/* 🔥 Animated background circles */
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    animation: float 6s infinite ease-in-out;
+    z-index: 0;
+}
+
+.circle:nth-child(1) {
+    width: 200px; height: 200px;
+    top: 10%; left: 10%;
+}
+.circle:nth-child(2) {
+    width: 300px; height: 300px;
+    bottom: 10%; right: 10%;
+}
+.circle:nth-child(3) {
+    width: 150px; height: 150px;
+    bottom: 20%; left: 30%;
+}
+
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* 🧊 Glass card */
+.container {
+    position: relative;
+    width: 400px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    text-align: center;
+    color: white;
+    animation: fadeIn 0.8s ease;
+    z-index: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+/* ✨ Input group */
+.input-group {
+    position: relative;
+    margin: 15px 0;
+}
+
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.input-group select option {
+    background: #2d6a4f;
+}
+
+.input-group label {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    color: #eee;
+    transition: 0.3s;
+    pointer-events: none;
+}
+
+/* Floating label */
+.input-group input:focus + label,
+.input-group input:valid + label,
+.input-group select:focus + label,
+.input-group select:valid + label {
+    top: -8px;
+    left: 8px;
+    font-size: 12px;
+    background: rgba(45,106,79,0.9);
+    padding: 0 5px;
+    border-radius: 5px;
+}
+
+/* 🔘 Button */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #1b4332;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #2d6a4f;
+}
+
+/* 🔁 Extra */
+.switch {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.switch:hover {
+    opacity: 1;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Background animation -->
+<div class="circle"></div>
+<div class="circle"></div>
+<div class="circle"></div>
+
+<!-- Glass Register Card -->
+<div class="container">
+
+    <h2>Join AgriPower 🌾</h2>
+
+    <form id="registerForm">
+
+        <div class="input-group">
+            <input type="text" id="name" required>
+            <label>Full Name</label>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="phone" required>
+            <label>Phone Number</label>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="address" required>
+            <label>Address</label>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="farmSize" required>
+            <label>Farm Size (e.g. 5 Acres)</label>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="zone" required>
+            <label>Zone (e.g. North, East)</label>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="password" required maxlength="5" minlength="5">
+            <label>Password (5 chars)</label>
+        </div>
+
+        <button type="submit">Register</button>
+
+    </form>
+
+    <p class="switch" onclick="window.location.href='/login.html'">
+        Already have an account? Login here
+    </p>
+
+</div>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        farmSize: document.getElementById("farmSize").value,
+        zone: document.getElementById("zone").value,
+        password: document.getElementById("password").value
+    };
+
+    try {
+        let res = await fetch("/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        let result = await res.text();
+        alert(result);
+
+        if (result.includes("successfully")) {
+            window.location.href = "/login.html";
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error during registration");
+    }
+});
+</script>
+
+</body>
+</html>

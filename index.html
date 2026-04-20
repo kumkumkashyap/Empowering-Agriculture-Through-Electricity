@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AgriPower | Smart Energy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root {
+    --green: #2d6a4f;
+    --light: #e9f5ee;
+    --accent: #52b788;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #f8fbf9;
+}
+
+/* NAVBAR */
+nav {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    padding: 15px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+}
+
+.logo {
+    font-weight: 700;
+    color: var(--green);
+}
+
+nav button {
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* HERO */
+.hero {
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 60px;
+    position: relative;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+}
+
+.hero-content {
+    position: relative;
+    color: rgb(235, 235, 235);
+    max-width: 700px;
+    animation: fadeUp 1s ease;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    opacity: 0.9;
+}
+
+.hero button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.hero button:hover {
+    transform: scale(1.05);
+}
+
+/* FEATURES */
+.features {
+    padding: 80px 8%;
+    text-align: center;
+}
+
+.features h2 {
+    margin-bottom: 40px;
+    color: var(--green);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    gap: 25px;
+}
+
+.card {
+    background: rgb(74, 173, 121);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* ICON */
+.icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+/* CTA */
+.cta {
+    background: var(--green);
+    color: white;
+    padding: 60px;
+    text-align: center;
+}
+
+.cta button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: white;
+    color: var(--green);
+    cursor: pointer;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 20px;
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+#dashboard .card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+#dashboard .card:hover {
+    transform: translateY(-8px);
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">AgriPower</div>
+    <div>
+        <button onclick="window.location.href='/login.html'">Login</button>
+        <button onclick="window.location.href='/register.html'" style="background:transparent; border:1px solid var(--green); color:var(--green); margin-left:10px;">Register</button>
+    </div>
+</nav>
+
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Empowering Agriculture Through Electricity</h1>
+        <p>Smart energy distribution for irrigation, machinery & rural growth</p>
+        <button onclick="window.location.href='/login.html'">Get Started</button>
+    </div>
+</section>
+
+<!-- 🌾 FARMER DASHBOARD -->
+<section id="dashboard" style="display:none; padding:80px 8%;">
+
+    <h2 style="margin-bottom:20px; color:#2d6a4f;">
+        Welcome, <span id="farmer-name"></span>
+    </h2>
+
+    <button onclick="logout()" style="
+        float:right;
+        margin-bottom:20px;
+        padding:8px 15px;
+        background:#2d6a4f;
+        color:white;
+        border:none;
+        border-radius:10px;
+        cursor:pointer;">
+        Logout
+    </button>
+
+    <div class="grid">
+
+        <!-- POWER -->
+        <div class="card">
+            <h3>⚡ Power Schedule</h3>
+            <p>Zone: <b id="zone"></b></p>
+            <p>Start: <b id="start"></b></p>
+            <p>End: <b id="end"></b></p>
+        </div>
+
+        <!-- USAGE -->
+        <div class="card">
+            <h3>📊 Usage</h3>
+            <p id="usage">Loading...</p>
+        </div>
+
+        <!-- VOLTAGE -->
+        <div class="card">
+            <h3>🔌 Voltage</h3>
+            <p id="voltage">Loading...</p>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="card">
+            <h3>📢 Announcements</h3>
+            <div id="announcements"></div>
+        </div>
+
+    </div>
+
+    <!-- COMPLAINT -->
+    <div class="card" style="margin-top:30px;">
+        <h3>⚠️ Raise Complaint</h3>
+        <textarea id="complaint" style="width:100%; padding:10px;"></textarea>
+        <button onclick="sendComplaint()">Submit</button>
+
+        <hr style="margin:20px 0;">
+
+        <h3>📋 My Complaints</h3>
+        <div id="complaintList"></div>
+    </div>
+
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+    <h2>Our Solutions</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="icon">💧</div>
+            <h3>Irrigation Systems</h3>
+            <p>Reliable power for automated irrigation systems.</p>
+        </div>
+
+        <div class="card">
+            <div class="icon">❄️</div>
+            <h3>Cold Storage</h3>
+            <p>Preserve crops and reduce post-harvest loss.</p>
+        </div>
+
+        <div class="card">
+            <div class="icon">⚙️</div>
+            <h3>Machinery Use</h3>
+            <p>Power for modern agricultural machinery.</p>
+        </div>
+
+        <div class="card">
+            <div class="icon">⚡</div>
+            <h3>Rural Electrification</h3>
+            <p>Expanding electricity to remote areas.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Join the Future of Smart Farming</h2>
+    <button onclick="window.location.href='/login.html'">Login Now</button>
+</section>
+
+<footer>
+    <p>©️ 2026 AgriPower | Smart Agriculture</p>
+</footer>
+
+<script>
+let loggedInUser = null;
+
+// ✅ AUTO LOGIN
+window.onload = () => {
+    let user = JSON.parse(localStorage.getItem("user"));
+
+    if (user && user.role === "farmer") {
+        loggedInUser = user;
+        showDashboard();
+        loadDashboard();
+        
+        setInterval(loadDashboard, 5000);
+    }
+};
+
+// 🎯 SHOW DASHBOARD
+function showDashboard() {
+    document.querySelector(".hero").style.display = "none";
+    document.querySelector(".features").style.display = "none";
+    document.querySelector(".cta").style.display = "none";
+
+    document.getElementById("dashboard").style.display = "block";
+}
+
+// 📊 LOAD DATA
+async function loadDashboard() {
+
+    let res = await fetch("/farmerDashboard", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ phone: loggedInUser.phone })
+    });
+
+    let data = await res.json();
+    console.log(data);
+
+    let farmerNameEl = document.getElementById("farmer-name");
+    let zoneEl = document.getElementById("zone");
+    let startEl = document.getElementById("start");
+    let endEl = document.getElementById("end");
+    let usageEl = document.getElementById("usage");
+    let voltageEl = document.getElementById("voltage");
+    let complaintListEl = document.getElementById("complaintList");
+
+    farmerNameEl.innerText = data.name;
+    zoneEl.innerText = data.zone;
+
+    // ⚡ POWER SCHEDULE (FINAL FIX)
+    if (data.power && data.power.startTime) {
+        startEl.innerText = data.power.startTime;
+        endEl.innerText = data.power.endTime;
+    } else {
+        startEl.innerText = "Not Set";
+        endEl.innerText = "Not Set";
+    }
+
+    // 📊 USAGE
+    if (Array.isArray(data.usage) && data.usage.length > 0) {
+        usageEl.innerText = data.usage[data.usage.length - 1].units + " units";
+    } else {
+        usageEl.innerText = "No data";
+    }
+
+    // 🔌 VOLTAGE
+    if (Array.isArray(data.voltage) && data.voltage.length > 0) {
+        voltageEl.innerText = data.voltage[data.voltage.length - 1].voltage + " V";
+    } else {
+        voltageEl.innerText = "No data";
+    }
+
+    // 📢 ANNOUNCEMENTS
+    let a = await fetch("/getAnnouncements");
+    let announcements = await a.json();
+
+    document.getElementById("announcements").innerHTML =
+        announcements.map(x => `<p>${x.date} - ${x.message}</p>`).join("");
+
+    // ⚠️ LOAD COMPLAINTS + REPLIES
+    complaintListEl.innerHTML = data.complaints.map(c => `
+        <div style="
+            background:#f1fdf3;
+            padding:10px;
+            margin:10px 0;
+            border-left:5px solid #2d6a4f;
+            border-radius:10px;
+        ">
+            <p><b>Complaint:</b> ${c.message}</p>
+            <p><b>Reply:</b> ${c.reply ? c.reply : "No reply yet"}</p>
+        </div>
+    `).join("");
+}
+
+// ⚠️ COMPLAINT
+async function sendComplaint() {
+    let msg = document.getElementById("complaint").value;
+
+    await fetch("/addComplaint", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            phone: loggedInUser.phone,
+            message: msg,
+            reply: ""
+        })
+    });
+
+    alert("Complaint sent");
+    document.getElementById("complaint").value = "";
+    loadDashboard(); 
+}
+
+// 🔓 LOGOUT
+function logout() {
+    localStorage.removeItem("user");
+    location.reload();
+}
+</script>
+
+</body>
+</html>
